@@ -1,0 +1,24 @@
+.mn-share-button {
+  text-indent: -9999px;
+  background-repeat: no-repeat;
+  display: block;
+  border: none;
+  width: 32px;
+  height: 32px;
+  background-color: #3740ff;
+  -webkit-box-shadow: 0 2px 4px -1px rgba(0,0,0,0.2), 0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12);
+  box-shadow: 0 2px 4px -1px rgba(0,0,0,0.2), 0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12);
+  border-radius: 50px;
+  background-size: 40%;
+  background-position: center center;
+}
+.mn-share-button:hover {
+  border: none;
+}
+.mn-share-button.fixed-icon {
+  position: fixed;
+  bottom: 50px;
+  right: 20px;
+  z-index: 99;
+  padding: 10px;
+}

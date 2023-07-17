@@ -1,0 +1,4 @@
+'administer mobile native share':
+  title: 'Administer Mobile Native Share'
+  description: 'Perform administration tasks for the Mobile Native Share module.'
+  restrict access: TRUE

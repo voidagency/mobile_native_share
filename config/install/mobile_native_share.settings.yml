@@ -1,0 +1,12 @@
+entities:
+  node:
+    article:
+      enable: 1
+      title: ""
+      description: ""
+    page:
+      enable: 1
+      title: ""
+      description: ""
+display: "default"
+icon: ""

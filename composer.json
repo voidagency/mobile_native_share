@@ -1,0 +1,12 @@
+{
+  "name": "b-khouy/mobile_native_share",
+  "description": "This module support to share content as mobile native share dialog",
+  "type": "drupal-module",
+  "homepage": "https://www.drupal.org/project/mobile_native_share",
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/mobile_native_share",
+    "source": "https://cgit.drupalcode.org/mobile_native_share"
+  },
+  "minimum-stability": "dev",
+  "require": {}
+}

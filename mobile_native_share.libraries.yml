@@ -1,0 +1,9 @@
+share-button:
+  version: VERSION
+  css:
+    theme:
+      css/share-button.css: {}
+  js:
+    js/share-button.js: {}
+  dependencies:
+    - core/drupal

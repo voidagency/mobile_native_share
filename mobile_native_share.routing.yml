@@ -1,0 +1,7 @@
+mobile_native_share.admin_settings:
+  path: '/admin/config/search/mobile-native-share'
+  defaults:
+    _form: '\Drupal\mobile_native_share\Form\MobileNativeShareSettings'
+    _title: 'Mobile Native Share'
+  requirements:
+    _permission: 'administer mobile native share'

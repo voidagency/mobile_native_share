@@ -1,0 +1,130 @@
+<?php
+
+use Drupal\Component\Utility\UrlHelper;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\mobile_native_share\Form\MobileNativeShareSettings;
+use Drupal\node\NodeInterface;
+
+/**
+ * Implements hook_help().
+ */
+function mobile_native_share_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the semantic_ui_form module.
+    case 'help.page.mobile_native_share':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('This module support to add a native share button.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function mobile_native_share_theme() {
+  return [
+    'mobile_native_share' => [
+      'variables' => [
+        'title' => FALSE,
+        'description' => FALSE,
+        'url' => FALSE,
+        'icon' => FALSE,
+        'classes' => FALSE,
+        'entity_type' => FALSE,
+        'bundle' => FALSE,
+      ],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK().
+ */
+function mobile_native_share_theme_suggestions_mobile_native_share(array $variables) {
+  $suggestion = 'mobile_native_share__';
+  $suggestions = [];
+  if (!empty($variables['entity_type'])) {
+    $suggestion .= $variables['entity_type'];
+    $suggestions[] = $suggestion;
+  }
+  if (!empty($variables['entity_type']) && !empty($variables['bundle'])) {
+    $suggestion .= '__' . $variables['bundle'];
+    $suggestions[] = $suggestion;
+  }
+  return $suggestions;
+}
+
+/**
+ * Implements hook_entity_extra_field_info().
+ */
+function mobile_native_share_entity_extra_field_info() {
+  $extra = [];
+  $entityTypes = MobileNativeShareSettings::getContentEntities();
+  $config = Drupal::config('mobile_native_share.settings');
+  \Drupal::moduleHandler()->alter('mobile_native_share_entity_types', $entityTypes);
+  foreach ($entityTypes as $type) {
+    $entityTypeId = $type->id();
+    $bundles = Drupal::service('entity_type.bundle.info')->getBundleInfo($entityTypeId);
+    foreach ($bundles as $bundle => $bundle_data) {
+      $isAllowed = $config->get("entities.{$entityTypeId}.{$bundle}.enable");
+      if ($isAllowed) {
+        $extra[$entityTypeId][$bundle]['display']['mobile_native_share'] = [
+          'label' => t('Native share button'),
+          'description' => t('Native share button'),
+          'weight' => 5,
+          'visible' => FALSE,
+        ];
+      }
+
+    }
+
+  }
+
+
+  return $extra;
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_view().
+ */
+function mobile_native_share_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
+  if ($display->getComponent('mobile_native_share')) {
+    $config = Drupal::config('mobile_native_share.settings');
+    $title = $config->get("entities.{$entity->getEntityTypeId()}.{$entity->bundle()}.title");
+    if (!empty($title)) {
+      $title =  \Drupal::token()->replace($title, [$entity->getEntityTypeId() => $entity]);
+    }
+    else {
+      $title = $entity->label();
+    }
+    $description = $config->get("entities.{$entity->getEntityTypeId()}.{$entity->bundle()}.description");
+    if (!empty($description)) {
+      $description =  \Drupal::token()->replace($description, [$entity->getEntityTypeId() => $entity]);
+    }
+    $url = !empty($entity) ? $entity->toUrl('canonical', ['absolute' => TRUE])->toString() : NULL;
+    $class = ['mn-share-button', 'visually-hidden'];
+    if (!empty($config->get('style')) && $config->get('style') != 'default') {
+      $class[] = $config->get('style');
+    }
+    $icon = base_path() . \Drupal::service('extension.list.module')->getPath('mobile_native_share') . '/images/sharew.svg';
+    if (!empty($config->get('icon'))) {
+      $icon = UrlHelper::stripDangerousProtocols($config->get('icon'));
+    }
+    $build['mobile_native_share'] = [
+      '#url' => $url,
+      '#title' => $title,
+      '#description' => $description,
+      '#icon' => $icon,
+      '#theme' => 'mobile_native_share',
+      '#classes' => $class,
+      '#entity_type' => $entity->getEntityTypeId(),
+      '#bundle' => $entity->bundle(),
+    ];
+    $build['mobile_native_share']['#attached']['library'][] = 'mobile_native_share/share-button';
+  }
+}

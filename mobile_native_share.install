@@ -1,0 +1,29 @@
+<?php
+
+/**
+ * Implements hook_install().
+ */
+function mobile_native_share_install() {
+  // Build a structured list of node bundles and view modes that have AddToAny
+  // enabled by default.
+  $node_enable_by_default = [
+    'article' => ['default'],
+    'page' => ['default'],
+  ];
+  // Get the config entity storage handler.
+  $storage = \Drupal::entityTypeManager()->getStorage('entity_view_display');
+  foreach ($node_enable_by_default as $bundle => $viewmodes) {
+    // Set a default weight per node type.
+    $display_weight = ($bundle == 'article') ? 5 : 101;
+
+    foreach ($viewmodes as $viewmode) {
+      // Get the config entity for this bundle and view mode.
+      /** @var \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display */
+      $display = $storage->load('node.' . $bundle . '.' . $viewmode);
+      // Enable the AddToAny extra field and save the config.
+      if (!empty($display)) {
+        $display->setComponent('mobile_native_share', ['weight' => $display_weight])->save();
+      }
+    }
+  }
+}
